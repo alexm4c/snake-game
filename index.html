@@ -72,18 +72,20 @@
                     if (e.keyCode === 39 && snake.head.xDir !== -1) {
                         // Right
                         controler.direction = 'right';
-                    }
-                    if (e.keyCode === 49) {
-                        // 1 Slow
-                        gameSpeed = 5;
-                    }
-                    if (e.keyCode === 50) {
-                        // 2 Medium
-                        gameSpeed = 4;
-                    }
-                    if (e.keyCode === 51) {
-                        // 3 Fast
-                        gameSpeed = 3;
+				}
+				if (e.keyCode === 109) {
+					// Decrease speed
+					if (gameSpeed < 6) {
+						gameSpeed += 1;
+					}
+					console.log('Game Speed:', gameSpeed);
+				}
+				if (e.keyCode === 107) {
+					// Increase speed
+					if (gameSpeed > 1) {
+						gameSpeed -= 1;
+					}
+					console.log('Game Speed:', gameSpeed);
                     }
                     if (e.keyCode === 13 && !gameIsRunning) {
                         // Return Key
@@ -234,18 +236,18 @@
             draw();
 
             function update() {
-                // Update snake direction
-                if (controler.direction == 'up') {
-                    snake.head.xDir = 0;
-                    snake.head.yDir = -1;
-                } else if (controler.direction == 'down') {
-                    snake.head.xDir = 0;
-                    snake.head.yDir = 1;
-                } else if (controler.direction == 'left') {
-                    snake.head.xDir = -1;
-                    snake.head.yDir = 0;
-                } else if (controler.direction == 'right') {
-                    snake.head.xDir = 1;
+			// Update snake direction
+			if (controler.direction === 'up') {
+				snake.head.xDir = 0;
+				snake.head.yDir = -1;
+			} else if (controler.direction === 'down') {
+				snake.head.xDir = 0;
+				snake.head.yDir = 1;
+			} else if (controler.direction === 'left') {
+				snake.head.xDir = -1;
+				snake.head.yDir = 0;
+			} else if (controler.direction === 'right') {
+				snake.head.xDir = 1;
                     snake.head.yDir = 0;
                 }
 
