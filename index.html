@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
+    <head>
         <meta charset="utf-8" />
-		<title>Snake Game</title>
-	</head>
-	<body>
+        <title>Snake Game</title>
+    </head>
+    <body>
         <script type="text/javascript" charset="utf-8">
             // Create the game board
             var board = document.createElement('canvas');
             document.body.appendChild(board);
-			board.width = 360;
-			board.height = 360;
+            board.width = 360;
+            board.height = 360;
             board.style.border = '1px solid black';
             board.addEventListener('click', function () {
                 if (!gameIsRunning) startGame();
-			});
+            });
 
             // Grab the context for drawing
             var ctx = board.getContext('2d');
@@ -29,7 +29,7 @@
 
             // Init snake
             var snake = {};
-			snake.head = {};
+            snake.head = {};
             snake.body;
 
             // Init food
@@ -58,9 +58,9 @@
                         Math.random() * (max / cellSize - min + 1) - min
                     ) * cellSize
                 );
-			}
+            }
 
-			//Keyboard controls
+            // Keyboard controls
             var controler = {};
             addEventListener(
                 'keydown',
@@ -85,48 +85,72 @@
                 false
             );
 
-			var frameNo;
-			var gameIsRunning;
-			var showGameOver = false;
+            // Game values and state
+            var tickCount = 0;
+            var gameSpeed = 3;
+            var gameIsRunning;
+            var showGameOver = false;
+            var cellSize = 30;
 
-			var cellSize = 30;
+            // Game loop
+            function frame() {
+                tick();
 
-			function startGame() {
-                setGameValues();
-				frame();
-			}
-
-			function endGame() {
-				gameIsRunning = false;
-				showGameOver = true;
+                if (gameIsRunning) {
+                    requestAnimationFrame(frame);
+                }
             }
 
-			function setGameValues() {
-				frameNo = 0;
-				gameIsRunning = true;
+            function tick() {
+                // Move the snake only every few frames
+                // This determine how fast the game feels
+                if (tickCount <= gameSpeed) {
+                    tickCount += 1;
+                } else {
+                    tickCount = 0;
+                    update();
+                }
+                draw();
+            }
 
-				//snake values
-				snake.speed = 6;
-				snake.length = 5;
-				snake.head.xDir = 0;
-				snake.head.yDir = -1;
-				snake.head.x = board.width / 2;
-				snake.head.y = board.width / 2;
-				//refresh snake body
-				snake.body = new Array()
-				for(var i=0; i<snake.length; i++) {
-					snake.body[i] = [snake.head.x, snake.head.y + i * cellSize];
-				}
+            function startGame() {
+                setGameValues();
+                frame();
+            }
 
-				//set food
-				food.newCell();
+            function endGame() {
+                gameIsRunning = false;
+                showGameOver = true;
+            }
 
-				//set controler
-				controler.direction = "up";
+            function setGameValues() {
+                gameIsRunning = true;
 
-				//hide dialogues
-				showPlayGame = false;
-				showGameOver = false;
+                // Set food
+                food.newCell();
+
+                // Set controler
+                controler.direction = 'up';
+
+                // Hide dialogues
+                showPlayGame = false;
+                showGameOver = false;
+
+                // Snake values
+                snake.length = 5;
+                snake.head.xDir = 0;
+                snake.head.yDir = -1;
+                snake.head.x = board.width / 2;
+                snake.head.y = board.width / 2;
+
+                // Refresh snake body
+                snake.body = new Array();
+                for (var i = 0; i < snake.length; i++) {
+                    snake.body[i] = [
+                        snake.head.x,
+                        snake.head.y + i * cellSize,
+                    ];
+                }
             }
 
             function draw() {
@@ -175,9 +199,6 @@
             }
 
             function update() {
-				// Move the snake only every few frames
-				// This determine how fast the game feels
-				if (frameNo % snake.speed == 0) {
                 // Update snake direction
                 if (controler.direction == 'up') {
                     snake.head.xDir = 0;
@@ -191,59 +212,57 @@
                 } else if (controler.direction == 'right') {
                     snake.head.xDir = 1;
                     snake.head.yDir = 0;
-					}
-					// Remember these for later
-					var oldX = snake.head.x;
-					var oldY = snake.head.y;
-					// Move snake
-					snake.head.x += cellSize * snake.head.xDir;
-					snake.head.y += cellSize * snake.head.yDir;
-					// X wrap
-					if(snake.head.x > board.width - cellSize) {
+                }
+
+                // Remember these for later
+                var oldX = snake.head.x;
+                var oldY = snake.head.y;
+
+                // Move snake
+                snake.head.x += cellSize * snake.head.xDir;
+                snake.head.y += cellSize * snake.head.yDir;
+
+                // X wrap
+                if (snake.head.x > board.width - cellSize) {
                     snake.head.x = 0;
                 } else if (snake.head.x < 0) {
                     snake.head.x = board.width - cellSize;
-					}
-					// Y wrap
-					if(snake.head.y > board.height - cellSize) {
+                }
+
+                // Y wrap
+                if (snake.head.y > board.height - cellSize) {
                     snake.head.y = 0;
                 } else if (snake.head.y < 0) {
                     snake.head.y = board.height - cellSize;
-					}
-					// Move body
-					for(var i=0; i<snake.length; i++) {
-						var tempX = snake.body[i][0];
-						var tempY = snake.body[i][1];
-						snake.body[i][0] = oldX;
-						snake.body[i][1] = oldY;
-						oldX = tempX;
-						oldY = tempY;
-					}
-					// When snake eats food
-					if(snake.head.x == food.x && snake.head.y == food.y) {
-						food.newCell();
-						snake.body.push([oldX, oldY]);
-						snake.length++;
-					}
-				}
-				// Check that snake hasn't crashed into itself
-            for (var i = 0; i < snake.length; i++) {
-					if(snake.body[i][0] == snake.head.x && snake.body[i][1] == snake.head.y) {
-                    endGame();
-					}
-				}
-			}
+                }
 
-			// Game loop
-			function frame() {
-				update();
-				draw();
-				frameNo++;
-				if(gameIsRunning) {
-					requestAnimationFrame(frame);
-				}
-			}
+                // Move body
+                for (var i = 0; i < snake.length; i++) {
+                    var tempX = snake.body[i][0];
+                    var tempY = snake.body[i][1];
+                    snake.body[i][0] = oldX;
+                    snake.body[i][1] = oldY;
+                    oldX = tempX;
+                    oldY = tempY;
+                }
 
-		</script>
-	</body>
+                // When snake eats food
+                if (snake.head.x == food.x && snake.head.y == food.y) {
+                    food.newCell();
+                    snake.body.push([oldX, oldY]);
+                    snake.length++;
+                }
+
+                // Check that snake hasn't crashed into itself
+                for (var i = 0; i < snake.length; i++) {
+                    if (
+                        snake.body[i][0] == snake.head.x &&
+                        snake.body[i][1] == snake.head.y
+                    ) {
+                        endGame();
+                    }
+                }
+            }
+        </script>
+    </body>
 </html>
