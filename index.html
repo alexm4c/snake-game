@@ -19,14 +19,6 @@
             // Grab the context for drawing
             var ctx = board.getContext('2d');
 
-            // Show play game dialogue
-            ctx.font = '16px Arial';
-            ctx.fillText(
-                'Click or Enter to play.',
-                board.width / 2 - 60,
-                board.height / 2
-            );
-
             // Init snake
             var snake = {};
             snake.head = {};
@@ -65,20 +57,36 @@
             addEventListener(
                 'keydown',
                 function (e) {
-                    if (e.keyCode == 38 && snake.head.yDir != 1) {
-                        controler.direction = 'up'; // Up
+                    if (e.keyCode === 38 && snake.head.yDir !== 1) {
+                        // Up
+                        controler.direction = 'up';
                     }
-                    if (e.keyCode == 40 && snake.head.yDir != -1) {
-                        controler.direction = 'down'; // Down
+                    if (e.keyCode === 40 && snake.head.yDir !== -1) {
+                        // Down
+                        controler.direction = 'down';
                     }
-                    if (e.keyCode == 37 && snake.head.xDir != 1) {
-                        controler.direction = 'left'; // Left
+                    if (e.keyCode === 37 && snake.head.xDir !== 1) {
+                        // Left
+                        controler.direction = 'left';
                     }
-                    if (e.keyCode == 39 && snake.head.xDir != -1) {
-                        controler.direction = 'right'; // Right
+                    if (e.keyCode === 39 && snake.head.xDir !== -1) {
+                        // Right
+                        controler.direction = 'right';
                     }
-                    if (e.keyCode == 13 && !gameIsRunning) {
-                        //return key
+                    if (e.keyCode === 49) {
+                        // 1 Slow
+                        gameSpeed = 5;
+                    }
+                    if (e.keyCode === 50) {
+                        // 2 Medium
+                        gameSpeed = 4;
+                    }
+                    if (e.keyCode === 51) {
+                        // 3 Fast
+                        gameSpeed = 3;
+                    }
+                    if (e.keyCode === 13 && !gameIsRunning) {
+                        // Return Key
                         startGame();
                     }
                 },
@@ -90,6 +98,7 @@
             var gameSpeed = 4;
             var gameIsRunning;
             var showGameOver = false;
+            var showPlayGame = true;
             var cellSize = 45;
 
             // Game loop
@@ -121,6 +130,7 @@
             function endGame() {
                 gameIsRunning = false;
                 showGameOver = true;
+                showPlayGame = true;
             }
 
             function setGameValues() {
@@ -133,8 +143,8 @@
                 controler.direction = 'up';
 
                 // Hide dialogues
-                showPlayGame = false;
                 showGameOver = false;
+                showPlayGame = false;
 
                 // Snake values
                 snake.length = 5;
@@ -159,44 +169,69 @@
                 ctx.fillRect(0, 0, board.width, board.height);
 
                 // Draw food
-                ctx.fillStyle = '#999966';
-                ctx.fillRect(food.x, food.y, cellSize, cellSize);
+                if (food) {
+                    ctx.fillStyle = '#999966';
+                    ctx.fillRect(food.x, food.y, cellSize, cellSize);
+                }
 
-                // Draw snake head
-                ctx.fillStyle = '#00cc00';
-                ctx.fillRect(
-                    snake.head.x,
-                    snake.head.y,
-                    cellSize,
-                    cellSize
-                );
-
-                // Draw snake body
-                ctx.fillStyle = '#00e600';
-                for (var i = 0; i < snake.length; i++) {
+                if (snake) {
+                    // Draw snake head
+                    ctx.fillStyle = '#00cc00';
                     ctx.fillRect(
-                        snake.body[i][0],
-                        snake.body[i][1],
+                        snake.head.x,
+                        snake.head.y,
                         cellSize,
                         cellSize
                     );
+
+                    // Draw snake body
+                    ctx.fillStyle = '#00e600';
+                    for (var i = 0; i < snake.length; i++) {
+                        ctx.fillRect(
+                            snake.body[i][0],
+                            snake.body[i][1],
+                            cellSize,
+                            cellSize
+                        );
+                    }
+
+                    // Draw score
+                    if (snake.length) {
+                        ctx.font = '16px Arial';
+                        ctx.fillStyle = '#000000';
+                        ctx.fillText(snake.length, 13, board.height - 10);
+                    }
                 }
 
-                // Draw score
-                ctx.font = '16px Arial';
-                ctx.fillStyle = '#000000';
-                ctx.fillText(snake.length, 13, board.height - 10);
-
-                // Draw game over if it is over
                 if (showGameOver) {
                     ctx.font = '16px Arial';
+                    ctx.fillStyle = '#000000';
                     ctx.fillText(
-                        'Game Over!',
-                        board.width / 2 - 30,
-                        board.height / 2 - 10
+                        'Game Over',
+                        board.width - 90,
+                        board.height - 10
+                    );
+                }
+
+                if (showPlayGame) {
+                    ctx.font = '16px Arial';
+                    ctx.fillStyle = '#000000';
+                    ctx.fillText(
+                        'Snake Game',
+                        10,
+                        20,
+                    );
+
+                    ctx.font = '16px Arial';
+                    ctx.fillStyle = '#000000';
+                    ctx.fillText(
+                        'Click or Enter to Start',
+                        board.width - 160,
+                        20
                     );
                 }
             }
+            draw();
 
             function update() {
                 // Update snake direction
