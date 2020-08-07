@@ -9,8 +9,8 @@
             // Create the game board
             var board = document.createElement('canvas');
             document.body.appendChild(board);
-            board.width = 360;
-            board.height = 360;
+            board.width = 540;
+            board.height = 540;
             board.style.border = '1px solid black';
             board.addEventListener('click', function () {
                 if (!gameIsRunning) startGame();
@@ -20,7 +20,7 @@
             var ctx = board.getContext('2d');
 
             // Show play game dialogue
-            ctx.font = '12px Arial';
+            ctx.font = '16px Arial';
             ctx.fillText(
                 'Click or Enter to play.',
                 board.width / 2 - 60,
@@ -87,10 +87,10 @@
 
             // Game values and state
             var tickCount = 0;
-            var gameSpeed = 3;
+            var gameSpeed = 4;
             var gameIsRunning;
             var showGameOver = false;
-            var cellSize = 30;
+            var cellSize = 45;
 
             // Game loop
             function frame() {
@@ -183,13 +183,13 @@
                 }
 
                 // Draw score
-                ctx.font = '11px Arial';
+                ctx.font = '16px Arial';
                 ctx.fillStyle = '#000000';
                 ctx.fillText(snake.length, 13, board.height - 10);
 
                 // Draw game over if it is over
                 if (showGameOver) {
-                    ctx.font = '12px Arial';
+                    ctx.font = '16px Arial';
                     ctx.fillText(
                         'Game Over!',
                         board.width / 2 - 30,
