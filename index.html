@@ -26,8 +26,8 @@
         // Create the game board
         var board = document.createElement('canvas');
         document.body.appendChild(board);
-        board.width = 540;
-        board.height = 540;
+        board.width = 360;
+        board.height = 360;
         board.style.border = '1px dashed grey';
         board.addEventListener('click', function () {
             if (!gameIsRunning) startGame();
@@ -115,11 +115,11 @@
 
         // Game values and state
         var tickCount = 0;
-        var gameSpeed = 4;
+        var gameSpeed = 3;
         var gameIsRunning;
         var showGameOver = false;
         var showPlayGame = true;
-        var cellSize = 45;
+        var cellSize = 15;
 
         // Game loop
         function frame() {
